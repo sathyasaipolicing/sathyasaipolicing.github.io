@@ -1085,16 +1085,16 @@ function detectNameIdx(aoa, header, low){
 /* Canonical 21 parameters: name, category, direction(+1/-1). Used to expand
    truncated headers from the weighted workbook (e.g. "NATGRID (Gand" → full). */
 const CANON21=[
-  ['MedLEaPR PME','MedLEaPR PME',1],['MedLEaPR MLC','MedLEaPR MLC',1],
-  ['NATGRID (Gandiva+Sudarshan)','NATGRID',1],['DGP Dashboard','DGP Dashboard',1],
-  ['CCTNS Overall Forms Entry','CCTNS Overall',1],['CCTNS Weekly Forms IIF 1-7','CCTNS IIF 1-7',1],
-  ['CCTNS Weekly Forms IIF 8-15','CCTNS IIF 8-15',1],['Zero FIRs','Zero FIRs',1],
-  ['Citizen Portal Pending%','Citizen Portal',1],['eSakshya SID%','eSakshya SID%',1],
-  ['CriMAC (PS%+Alerts/FIR)','CriMAC',1],['CEIR Score','CEIR Score',1],
-  ['eProsecution (PS%+Requests)','eProsecution',1],['FIRs & CS Consumed in Court','FIRs & CS Con',1],
+  ['MedLEaPR PME','MedLEaPR',1],['MedLEaPR MLC','MedLEaPR',1],
+  ['NATGRID (Gandiva+Sudarshan)','NATGRID',1],['DGP Dashboard','CCTNS',1],
+  ['CCTNS Overall Forms Entry','CCTNS',1],['CCTNS Weekly Forms IIF 1-7','CCTNS',1],
+  ['CCTNS Weekly Forms IIF 8-15','CCTNS',1],['Zero FIRs','CCTNS',1],
+  ['Citizen Portal Pending%','Citizen Portal',1],['eSakshya SID%','eSakshya',1],
+  ['CriMAC (PS%+Alerts/FIR)','CriMAC',1],['CEIR Score','CEIR',1],
+  ['eProsecution (PS%+Requests)','eProsecution',1],['FIRs & CS Consumed in Court','FIRs & CS',1],
   ['eOffice (Files+Speed)','eOffice',1],['APOLIS (Downloads+APR+ACR)','APOLIS',1],
-  ['Drone Flying Hours','Drone Flying',1],['Dial112 Tabs Online%','Dial112 Tabs',1],
-  ['Dial112 Resp.Time','Dial112 Resp',-1],['CCTV360 Usage','CCTV360 Usage',1],['News360AI','News360AI',1],
+  ['Drone Flying Hours','Drones',1],['Dial112 Tabs Online%','Dial 112',1],
+  ['Dial112 Resp.Time','Dial 112',-1],['CCTV360 Usage','CCTV360',1],['News360AI','News360AI',1],
   ['eFSL','eFSL',1],['UC3','UC3',1],['UC4','UC4',1],
 ];
 

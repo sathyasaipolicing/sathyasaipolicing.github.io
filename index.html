@@ -1017,7 +1017,7 @@ async function boot(){
   let data=null, source='';
   try{
     const res = await fetch('data/SSS_PS_WISE_PERFORMANCE.xlsx', {cache:'no-store'});
-    if(res.ok){ data = parseWorkbook(await res.arrayBuffer()); source='data/CTR_PS_WISE_PERFORMACE.xlsx (live)'; }
+    if(res.ok){ data = parseWorkbook(await res.arrayBuffer()); source='data/SSS_PS_WISE_PERFORMANCE.xlsx (live)'; }
   }catch(e){ /* file:// or offline — fall through */ }
   if(!data){
     try{ data = JSON.parse(document.getElementById('embedded-data').textContent); source='embedded snapshot'; }
@@ -2490,7 +2490,7 @@ function renderMethod(){
       <div class="card"><div class="ch"><h3>🔵 Grade Scale</h3></div><div class="cb">
         <div class="gradescale">${GRADES.map(g=>`<span class="gs" style="background:${gradeColorHex(g.g)}${g.g==='C'?';color:#5a3d00':''}">${g.g}: ${g.label}</span>`).join('')}</div></div></div>
       <div class="card"><div class="ch"><h3>⚠️ Notes</h3></div><div class="cb">
-        <div class="note">Scoring reflects <b>technology-adoption</b> across Smart Policing apps, not crime-outcome data. Ranks, heatmap, trends and grades are computed automatically from the latest published week and compared against the immediately previous week.${isAdmin()?` <br><br><b>Admin:</b> Update each week by replacing <b>data/CTR_PS_WISE_PERFORMACE.xlsx</b> (same column layout) — everything recomputes automatically. To enable Trends &amp; rank-movement, include a <b>Δ</b> column (score change vs previous week).`:``}</div></div></div>
+        <div class="note">Scoring reflects <b>technology-adoption</b> across Smart Policing apps, not crime-outcome data. Ranks, heatmap, trends and grades are computed automatically from the latest published week and compared against the immediately previous week.${isAdmin()?` <br><br><b>Admin:</b> Update each week by replacing <b>data/SSS_PS_WISE_PERFORMANCE.xlsx</b> (same column layout) — everything recomputes automatically. To enable Trends &amp; rank-movement, include a <b>Δ</b> column (score change vs previous week).`:``}</div></div></div>
     </div>`;
 }
 

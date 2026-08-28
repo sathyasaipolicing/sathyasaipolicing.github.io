@@ -1013,7 +1013,7 @@ async function boot(){
   // 2) Fallback: single live/embedded seed week (standalone file or no manifest yet)
   let data=null, source='';
   try{
-    const res = await fetch('data/CTR_PS_WISE_PERFORMACE.xlsx', {cache:'no-store'});
+    const res = await fetch('data/SSS_PS_WISE_PERFORMANCE.xlsx', {cache:'no-store'});
     if(res.ok){ data = parseWorkbook(await res.arrayBuffer()); source='data/CTR_PS_WISE_PERFORMACE.xlsx (live)'; }
   }catch(e){ /* file:// or offline — fall through */ }
   if(!data){

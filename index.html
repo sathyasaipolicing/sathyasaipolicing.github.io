@@ -3151,36 +3151,84 @@ function cLinks(it){
 }
 
 /* ---------------------------- DAILY DSR ---------------------------- */
+let DSR_YEAR=null, DSR_MONTH=null;
 async function renderDSR(){
   const host=document.getElementById('p-dsr'); if(!host) return;
   host.innerHTML=cEmpty('Loading…');
   const c=await loadContent();
   const items=(c.dsr||[]).slice();
-  const head=cHead('📋','Daily DSR','Daily Situation Reports, newest first');
+  const head=cHead('📋','Daily DSR','Pick a month to open its reports');
   if(!items.length){
     host.innerHTML=head+cEmpty('No DSR published yet. Upload a PDF into content/dsr/ in the repository.');
     return;
   }
-  const groups={};
+  const byYear={}, undated=[];
   items.forEach(it=>{
     const d=it.date?new Date(it.date):null;
-    const key=(d&&!isNaN(d))?(C_MONTHS[d.getMonth()]+' '+d.getFullYear()):'Undated';
-    (groups[key]||(groups[key]=[])).push(it);
+    if(!d || isNaN(d)){ undated.push(it); return; }
+    const y=d.getFullYear(), m=d.getMonth();
+    if(!byYear[y]) byYear[y]=Array.from({length:12},()=>[]);
+    byYear[y][m].push(it);
   });
-  const blocks=Object.keys(groups).map(k=>{
-    const rows=groups[k].map(it=>
+  const years=Object.keys(byYear).map(Number).sort((a,b)=>b-a);
+  if(!years.length && undated.length){
+    DSR_YEAR='undated';
+  }else if(DSR_YEAR===null || (DSR_YEAR!=='undated' && !byYear[DSR_YEAR])){
+    DSR_YEAR=years[0];
+  }
+  years.forEach(y=> byYear[y].forEach(list=>
+    list.sort((a,b)=> String(b.date||'').localeCompare(String(a.date||'')))));
+
+  let pills='';
+  if(years.length>1 || undated.length){
+    pills='<div class="dsr-years"><span class="dsr-ylab">Year</span>'
+      + years.map(y=>'<button type="button" class="dsr-pill'+(String(DSR_YEAR)===String(y)?' on':'')
+          +'" data-year="'+y+'">'+y+'</button>').join('')
+      + (undated.length?'<button type="button" class="dsr-pill'+(DSR_YEAR==='undated'?' on':'')
+          +'" data-year="undated">Undated ('+undated.length+')</button>':'')
+      + '</div>';
+  }
+
+  function tableFor(list, label){
+    const rows=list.map(it=>
       '<tr><td><span class="rp-name"><span class="rp-ico" style="background:#fdeaea">📕</span>'
       +escapeHtml(it.name)+'</span></td>'
       +'<td class="center">'+cDMY(it.date)+'</td>'
       +'<td class="center">'+(rpFmtSize(it.size)||(it.source==='drive'?'Drive':'—'))+'</td>'
       +'<td class="center">'+cLinks(it)+'</td></tr>').join('');
-    return '<div class="card" style="margin-bottom:16px"><div class="ch"><h3>🗓 '+escapeHtml(k)
-      +' <span style="color:var(--faint);font-weight:400;font-size:12px">('+groups[k].length+')</span></h3></div>'
-      +'<div class="cb" style="padding:0"><table class="rp-table"><thead><tr>'
+    return '<div class="lg-banner" style="margin-bottom:14px"><div class="lg-cur">'
+      +escapeHtml(label)+' &nbsp;·&nbsp; '+list.length+' report(s)</div>'
+      +'<button class="btn" id="dsrBack">↩ All months</button></div>'
+      +'<div class="card"><div class="cb" style="padding:0"><table class="rp-table"><thead><tr>'
       +'<th>Report</th><th class="center">Date</th><th class="center">Size</th><th class="center">Action</th>'
       +'</tr></thead><tbody>'+rows+'</tbody></table></div></div>';
-  }).join('');
-  host.innerHTML=head+blocks;
+  }
+
+  if(DSR_YEAR==='undated'){
+    host.innerHTML=head+pills+tableFor(undated,'Undated reports');
+  }else if(DSR_MONTH!==null && byYear[DSR_YEAR] && byYear[DSR_YEAR][DSR_MONTH].length){
+    host.innerHTML=head+pills+tableFor(byYear[DSR_YEAR][DSR_MONTH],
+      C_MONTHS[DSR_MONTH]+' '+DSR_YEAR);
+  }else{
+    const cards=C_MONTHS.map((mn,i)=>{
+      const n=(byYear[DSR_YEAR]||[])[i] ? byYear[DSR_YEAR][i].length : 0;
+      if(!n) return '<div class="dsr-mon off"><span class="dsr-mi">🗓</span>'
+        +'<span class="dsr-mn">'+mn+'</span><span class="dsr-mc">No reports</span></div>';
+      return '<button type="button" class="dsr-mon" data-mon="'+i+'"><span class="dsr-mi">🗓</span>'
+        +'<span class="dsr-mn">'+mn+'</span><span class="dsr-mc">'+n+' report(s)</span></button>';
+    }).join('');
+    host.innerHTML=head+pills+'<div class="dsr-grid">'+cards+'</div>';
+  }
+
+  host.querySelectorAll('.dsr-pill').forEach(el=>{
+    el.onclick=()=>{ const v=el.dataset.year;
+      DSR_YEAR=(v==='undated')?'undated':Number(v); DSR_MONTH=null; renderDSR(); };
+  });
+  host.querySelectorAll('.dsr-mon[data-mon]').forEach(el=>{
+    el.onclick=()=>{ DSR_MONTH=Number(el.dataset.mon); renderDSR(); };
+  });
+  const b=host.querySelector('#dsrBack');
+  if(b) b.onclick=()=>{ DSR_MONTH=null; if(DSR_YEAR==='undated') DSR_YEAR=years[0]||'undated'; renderDSR(); };
 }
 
 /* ------------------------- IMPORTANT MEMOS ------------------------- */

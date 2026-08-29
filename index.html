@@ -889,7 +889,7 @@ const WEIGHTS_TABLE = [
 let STATE = { config:{}, parameters:[], stations:[], rows:[], byName:{}, source:'',
   weeks:[], overall:[], history:{labels:[],byName:{},weeksCount:0},
   currentData:null, prevData:null, compareMode:'none' };
-const LS_KEY='ctr_ps_weeks_v1';
+const LS_KEY='sss_ps_weeks_v1';
 
 /* ===================== ADMIN GATE (cosmetic; real control = GitHub repo access) =====================
    The public site is VIEW-ONLY. Admin mode unlocks the in-browser uploader as a
@@ -901,14 +901,14 @@ const LS_KEY='ctr_ps_weeks_v1';
 const ADMIN_HASH = 1166420827; /* djb2('SriSathyaSai_@2026') — change via genHash() in console */
 function djb2(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))>>>0;return h;}
 if(typeof window!=='undefined') window.genHash=s=>{const h=djb2(String(s));console.log('ADMIN_HASH =',h);return h;};
-function isAdmin(){ try{return sessionStorage.getItem('ctr_admin')==='1';}catch(e){return false;} }
+function isAdmin(){ try{return sessionStorage.getItem('sss_admin')==='1';}catch(e){return false;} }
 function adminLogin(){
   const p=prompt('Enter admin passcode:'); if(p==null) return;
-  if(djb2(p)===ADMIN_HASH){ try{sessionStorage.setItem('ctr_admin','1');}catch(e){} apiLogin(p);
+  if(djb2(p)===ADMIN_HASH){ try{sessionStorage.setItem('sss_admin','1');}catch(e){} apiLogin(p);
     toast('Admin mode enabled'); if(location.hash) history.replaceState(null,'',location.pathname+location.search); boot(); }
   else toast('Incorrect passcode');
 }
-function adminLogout(){ try{sessionStorage.removeItem('ctr_admin');}catch(e){} apiLogout(); toast('Signed out of admin'); boot(); }
+function adminLogout(){ try{sessionStorage.removeItem('sss_admin');}catch(e){} apiLogout(); toast('Signed out of admin'); boot(); }
 function applyRole(){
   const admin=isAdmin();
   const tools=document.getElementById('adminTools'); if(tools) tools.style.display=admin?'flex':'none';
@@ -930,7 +930,7 @@ function idbOpen(){
     try{
       if(__idb) return res(__idb);
       if(!('indexedDB' in window)) return res(null);
-      const rq=indexedDB.open('ctr_ps_db',1);
+      const rq=indexedDB.open('sss_ps_db',1);
       rq.onupgradeneeded=e=>{ const db=e.target.result; if(!db.objectStoreNames.contains('kv')) db.createObjectStore('kv'); };
       rq.onsuccess=e=>{ __idb=e.target.result; res(__idb); };
       rq.onerror=()=>res(null);
@@ -1025,7 +1025,7 @@ async function boot(){
   }
   if(!data){ setSource(false,'No data could be loaded.'); return; }
   const cfg=data.config||{};
-  const seedName = cfg.seedFilename || ('CTR_PS_'+(cfg.prevWeek||'20.05.2026')+'-'+(cfg.weekEnding||'26.05.2026'));
+  const seedName = cfg.seedFilename || ('SSS_PS_'+(cfg.prevWeek||'20.05.2026')+'-'+(cfg.weekEnding||'26.05.2026'));
   STATE.weeks=[];
   addWeek(data, seedName, source, /*published=*/true, /*isSample=*/!!(cfg.isSample));
   mergeStaged();             // (1) uploaded weeks always survive a refresh

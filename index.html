@@ -897,8 +897,8 @@ const LS_KEY='sss_ps_weeks_v1';
    data/weeks/ and add it to data/weeks/manifest.json, then push.
    Change the passcode: open the browser console and run  genHash('your new passcode')
    then paste the number into ADMIN_HASH below and re-deploy.
-   Default passcode: SriSathyaSai_@2026                                                            */
-const ADMIN_HASH = 1577437141; /* djb2('SriSathyaSai_@2026') — change via genHash() in console */
+   Default passcode: srisrisathya@2026                                                            */
+const ADMIN_HASH = 1577437141; /* djb2('srisrisathya@2026') — change via genHash() in console */
 function djb2(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))>>>0;return h;}
 if(typeof window!=='undefined') window.genHash=s=>{const h=djb2(String(s));console.log('ADMIN_HASH =',h);return h;};
 function isAdmin(){ try{return sessionStorage.getItem('sss_admin')==='1';}catch(e){return false;} }

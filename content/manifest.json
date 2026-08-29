@@ -1,0 +1,28 @@
+{
+  "dsr": [
+    {
+      "name": "DSR_29.08.2026_Arrest.pdf",
+      "url": "content/dsr/DSR_29.08.2026_Arrest.pdf",
+      "size": 33168,
+      "date": "2026-08-29",
+      "source": "repo"
+    },
+    {
+      "name": "DSR_28.08.2026_Bindover.pdf",
+      "url": "content/dsr/DSR_28.08.2026_Bindover.pdf",
+      "size": 27349,
+      "date": "2026-08-28",
+      "source": "repo"
+    },
+    {
+      "name": "DSR_27.08.2026_Arrest.pdf",
+      "url": "content/dsr/DSR_27.08.2026_Arrest.pdf",
+      "size": 33168,
+      "date": "2026-08-27",
+      "source": "repo"
+    }
+  ],
+  "memos": [],
+  "apps": [],
+  "videos": []
+}

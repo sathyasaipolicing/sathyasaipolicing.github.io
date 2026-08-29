@@ -2500,18 +2500,37 @@ function renderMethod(){
    PS names in the loaded weekly file are matched to this list with tolerant,
    punctuation-insensitive matching, so small spelling/format differences still map. */
 const SD_RAW = [
-  ["SriSathyaSai_ I Town UPS","SriSathyaSai_"],["SriSathyaSai_ II Town UPS","SriSathyaSai_"],["SriSathyaSai_ Taluk PS","SriSathyaSai_"],
-  ["Narsingarayanipet(N.R.Pet)","SriSathyaSai_"],["Penumur","SriSathyaSai_"],["Gudipala","SriSathyaSai_"],
-  ["Kanipakam","SriSathyaSai_"],["Thavanampalle","SriSathyaSai_"],["Yadamari","SriSathyaSai_"],
-  ["G.D.Nellore UPS","SriSathyaSai_"],["Irala","SriSathyaSai_"],["Kallur","SriSathyaSai_"],
-  ["Rompicherla","SriSathyaSai_"],["Puthalapattu UPS","SriSathyaSai_"],
-  ["SriSathyaSai_ Traffic UPS","SPL Wings"],["Mahila UPS, SriSathyaSai_","SPL Wings"],["CCS SriSathyaSai_ UPS","SPL Wings"],
-  ["Gudipalli","Kuppam"],["Rallabudugur","Kuppam"],["Ramakuppam","Kuppam"],["Kuppam UPS","Kuppam"],
-  ["K. Nagar","Nagari"],["Palasamudram","Nagari"],["S.R.Puram","Nagari"],["Vedurukuppam","Nagari"],
-  ["Nindra","Nagari"],["Vijayapuram","Nagari"],["Nagari UPS","Nagari"],
-  ["Bangarupalem UPS","Palamaner"],["Gangavaram UPS","Palamaner"],["Baireddypalle","Palamaner"],
-  ["Panjani","Palamaner"],["Palamaner UPS","Palamaner"],["Chowdepalli","Palamaner"],
-  ["Sodam","Palamaner"],["Somala","Palamaner"],["Punganur UPS","Palamaner"],["V.Kota UPS","Palamaner"]
+  /* ---- PUTTAPARTHI SUB-DIVISION (7 L&O PS) ---- */
+  ["Amadaguru PS","Puttaparthi"],["Bukkapatnam PS","Puttaparthi"],
+  ["Kothacheruvu PS","Puttaparthi"],["Nallamada PS","Puttaparthi"],
+  ["O.D.Cheruvu PS","Puttaparthi"],["Puttaparthi Town PS","Puttaparthi"],
+  ["Puttaparthi Rural PS","Puttaparthi"],
+
+  /* ---- HINDUPUR SUB-DIVISION (5 L&O PS) ---- */
+  ["Chilmathur PS","Hindupur"],["Hindupur I Town PS","Hindupur"],
+  ["Hindupur II Town PS","Hindupur"],["Hindupur Rural PS","Hindupur"],
+  ["Lepakshi PS","Hindupur"],
+
+  /* ---- DHARMAVARAM SUB-DIVISION (10 PS) ---- */
+  ["Bathalapalli PS","Dharmavaram"],["Chennekothapalli PS","Dharmavaram"],
+  ["Dharmavaram I Town PS","Dharmavaram"],["Dharmavaram II Town PS","Dharmavaram"],
+  ["Dharmavaram Rural PS","Dharmavaram"],["Kanaganapalli PS","Dharmavaram"],
+  ["Mudigubba PS","Dharmavaram"],["Patnam PS","Dharmavaram"],
+  ["Ramagiri PS","Dharmavaram"],["Tadimarri PS","Dharmavaram"],
+
+  /* ---- PENUKONDA SUB-DIVISION (11 PS) ---- */
+  ["Agali PS","Penukonda"],["Amarapuram PS","Penukonda"],
+  ["Gorantla UPS","Penukonda"],["Gudibanda PS","Penukonda"],
+  ["KIA PS","Penukonda"],["Madakasira UPS","Penukonda"],
+  ["Parigi PS","Penukonda"],["Penukonda PS","Penukonda"],
+  ["Roddam PS","Penukonda"],["Rolla PS","Penukonda"],
+  ["Somandepalli PS","Penukonda"],
+
+  /* ---- KADIRI SUB-DIVISION (7 PS) ---- */
+  ["Gandlapenta PS","Kadiri"],["Kadiri Rural PS","Kadiri"],
+  ["Kadiri Town PS","Kadiri"],["N.P.Kunta PS","Kadiri"],
+  ["Nallacheruvu PS","Kadiri"],["Talupula PS","Kadiri"],
+  ["Tanakallu PS","Kadiri"]
 ];
 const SD_LIST = [...new Set(SD_RAW.map(r=>r[1]))];               // SD names, in mapping order
 function sdNorm(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,''); }

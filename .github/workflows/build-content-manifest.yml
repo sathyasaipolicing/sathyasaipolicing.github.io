@@ -1,0 +1,45 @@
+# Auto-rebuilds content/manifest.json whenever you add or remove anything
+# under content/. Publishing a DSR, memo, app link or video is then just:
+# upload the file into the right folder and commit.
+name: Build content manifest
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'content/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-content-manifest
+  cancel-in-progress: false
+
+jobs:
+  manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # full history so commit dates resolve
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Regenerate content/manifest.json
+        run: python make_content_manifest.py
+
+      - name: Commit manifest if it changed
+        run: |
+          if ! git diff --quiet -- content/manifest.json; then
+            git config user.name  "manifest-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add content/manifest.json
+            git commit -m "Auto-update content manifest [skip ci]"
+            git push
+          else
+            echo "content/manifest.json already up to date."
+          fi

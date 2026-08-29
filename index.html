@@ -3115,6 +3115,173 @@ async function exportSDDetailHeatmapExcel(sdName){
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
 
+  /* ============================================================= */
+/* ====  DISTRICT RESOURCES — DSR · MEMOS · IT APPS · VIDEOS ==== */
+/* Reads content/manifest.json, built by make_content_manifest.py */
+/* ============================================================= */
+let CONTENT = null;
+async function loadContent(force){
+  if(CONTENT && !force) return CONTENT;
+  try{
+    const r = await fetch('content/manifest.json', {cache:'no-store'});
+    if(!r.ok) throw new Error('no manifest');
+    CONTENT = await r.json();
+  }catch(e){
+    CONTENT = {dsr:[], memos:[], videos:[], apps:[]};
+  }
+  return CONTENT;
+}
+function cEmpty(msg){
+  return '<div class="card"><div class="cb"><div class="rp-empty">'+escapeHtml(msg)+'</div></div></div>';
+}
+function cHead(icon, title, desc){
+  return '<div class="sec-h"><h2>'+icon+' '+escapeHtml(title)+'</h2>'
+       + '<span class="desc">'+escapeHtml(desc)+'</span></div>';
+}
+const C_MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function cDMY(iso){
+  if(!iso) return '—';
+  const d=new Date(iso); if(isNaN(d)) return iso;
+  return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
+}
+function cLinks(it){
+  return '<span class="rp-act">'
+    +'<a href="'+it.url+'" target="_blank" rel="noopener">👁 View</a>'
+    +'<a href="'+(it.download||it.url)+'" '+(it.download?'target="_blank" rel="noopener"':'download')+'>⬇ Download</a></span>';
+}
+
+/* ---------------------------- DAILY DSR ---------------------------- */
+async function renderDSR(){
+  const host=document.getElementById('p-dsr'); if(!host) return;
+  host.innerHTML=cEmpty('Loading…');
+  const c=await loadContent();
+  const items=(c.dsr||[]).slice();
+  const head=cHead('📋','Daily DSR','Daily Situation Reports, newest first');
+  if(!items.length){
+    host.innerHTML=head+cEmpty('No DSR published yet. Upload a PDF into content/dsr/ in the repository.');
+    return;
+  }
+  const groups={};
+  items.forEach(it=>{
+    const d=it.date?new Date(it.date):null;
+    const key=(d&&!isNaN(d))?(C_MONTHS[d.getMonth()]+' '+d.getFullYear()):'Undated';
+    (groups[key]||(groups[key]=[])).push(it);
+  });
+  const blocks=Object.keys(groups).map(k=>{
+    const rows=groups[k].map(it=>
+      '<tr><td><span class="rp-name"><span class="rp-ico" style="background:#fdeaea">📕</span>'
+      +escapeHtml(it.name)+'</span></td>'
+      +'<td class="center">'+cDMY(it.date)+'</td>'
+      +'<td class="center">'+(rpFmtSize(it.size)||(it.source==='drive'?'Drive':'—'))+'</td>'
+      +'<td class="center">'+cLinks(it)+'</td></tr>').join('');
+    return '<div class="card" style="margin-bottom:16px"><div class="ch"><h3>🗓 '+escapeHtml(k)
+      +' <span style="color:var(--faint);font-weight:400;font-size:12px">('+groups[k].length+')</span></h3></div>'
+      +'<div class="cb" style="padding:0"><table class="rp-table"><thead><tr>'
+      +'<th>Report</th><th class="center">Date</th><th class="center">Size</th><th class="center">Action</th>'
+      +'</tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+  }).join('');
+  host.innerHTML=head+blocks;
+}
+
+/* ------------------------- IMPORTANT MEMOS ------------------------- */
+let MEMO_SUBJECT=null;
+async function renderMemos(){
+  const host=document.getElementById('p-memos'); if(!host) return;
+  host.innerHTML=cEmpty('Loading…');
+  const c=await loadContent();
+  const subs=(c.memos||[]);
+  const head=cHead('📑','Important Memos','Browse by subject');
+  if(!subs.length){
+    host.innerHTML=head+cEmpty('No memos published yet. Create a subject folder inside content/memos/ and add files to it.');
+    return;
+  }
+  if(MEMO_SUBJECT===null){
+    const cards=subs.map(s=>
+      '<button type="button" class="memo-card" data-subj="'+escapeHtml(s.subject)+'">'
+      +'<span class="memo-ico">📁</span>'
+      +'<span class="memo-name">'+escapeHtml(s.subject)+'</span>'
+      +'<span class="memo-count">'+(s.files||[]).length+' file(s)</span></button>').join('');
+    host.innerHTML=head+'<div class="memo-grid">'+cards+'</div>';
+  }else{
+    const rec=subs.find(s=>s.subject===MEMO_SUBJECT);
+    if(!rec){ MEMO_SUBJECT=null; renderMemos(); return; }
+    const rows=(rec.files||[]).map(f=>
+      '<tr><td><span class="rp-name"><span class="rp-ico" style="background:#eef0f4">📄</span>'
+      +escapeHtml(f.name)+'</span></td>'
+      +'<td class="center">'+cDMY(f.date)+'</td>'
+      +'<td class="center">'+(rpFmtSize(f.size)||(f.source==='drive'?'Drive':'—'))+'</td>'
+      +'<td class="center">'+cLinks(f)+'</td></tr>').join('')
+      || '<tr><td colspan="4"><div class="rp-empty">This subject folder is empty.</div></td></tr>';
+    host.innerHTML=head
+      +'<div class="lg-banner" style="margin-bottom:14px"><div class="lg-cur">Subject: <b>'
+      +escapeHtml(rec.subject)+'</b></div>'
+      +'<button class="btn" id="memoBack">↩ All subjects</button></div>'
+      +'<div class="card"><div class="cb" style="padding:0"><table class="rp-table"><thead><tr>'
+      +'<th>File</th><th class="center">Date</th><th class="center">Size</th><th class="center">Action</th>'
+      +'</tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+    const b=host.querySelector('#memoBack');
+    if(b) b.onclick=()=>{ MEMO_SUBJECT=null; renderMemos(); };
+  }
+  host.querySelectorAll('.memo-card').forEach(el=>{
+    el.onclick=()=>{ MEMO_SUBJECT=el.dataset.subj; renderMemos(); };
+  });
+}
+
+/* ------------------------- IT APPLICATIONS ------------------------- */
+async function renderApps(){
+  const host=document.getElementById('p-apps'); if(!host) return;
+  host.innerHTML=cEmpty('Loading…');
+  const c=await loadContent();
+  const apps=(c.apps||[]);
+  const head=cHead('💻','IT Applications','Quick links to the applications used across the district');
+  if(!apps.length){
+    host.innerHTML=head+cEmpty('No applications listed yet. Edit content/it-apps/apps.json in the repository.');
+    return;
+  }
+  const tiles=apps.map(a=>
+    '<a class="app-card" href="'+a.url+'" target="_blank" rel="noopener">'
+    +'<span class="app-ico">'+(a.icon||'🔗')+'</span>'
+    +'<span class="app-name">'+escapeHtml(a.name||'')+'</span>'
+    +'<span class="app-desc">'+escapeHtml(a.desc||'')+'</span></a>').join('');
+  host.innerHTML=head+'<div class="app-grid">'+tiles+'</div>';
+}
+
+/* ------------------------ AWARENESS VIDEOS ------------------------- */
+async function renderVideos(){
+  const host=document.getElementById('p-videos'); if(!host) return;
+  host.innerHTML=cEmpty('Loading…');
+  const c=await loadContent();
+  const vids=(c.videos||[]);
+  const head=cHead('🎥','Awareness Videos','Public awareness and outreach videos');
+  if(!vids.length){
+    host.innerHTML=head+cEmpty('No videos published yet. Upload an MP4 into content/videos/ or list Drive files in content/videos/links.json.');
+    return;
+  }
+  const cards=vids.map(v=>{
+    const player = v.embed
+      ? '<iframe src="'+v.embed+'" allow="autoplay" allowfullscreen loading="lazy"></iframe>'
+      : '<video controls preload="metadata" playsinline src="'+v.url+'"></video>';
+    return '<div class="vid-card">'+player
+      +'<div class="vid-meta"><b>'+escapeHtml(v.name)+'</b>'
+      +'<span>'+(v.source==='drive'?'Google Drive':(rpFmtSize(v.size)||''))+'</span></div></div>';
+  }).join('');
+  host.innerHTML=head+'<div class="vid-grid">'+cards+'</div>';
+}
+
+/* Quick Access tiles → open the matching tab, and show live counts */
+document.addEventListener('click', e=>{
+  const t=e.target.closest('.qa-tile'); if(t) switchTab(t.dataset.p);
+});
+(async function qaCounts(){
+  const c=await loadContent();
+  const set=(id,n,word)=>{ const el=document.getElementById(id);
+    if(el && n) el.textContent=n+' '+word; };
+  const memoFiles=(c.memos||[]).reduce((a,g)=>a+(g.files||[]).length,0);
+  set('qa-c-dsr',    (c.dsr||[]).length,   'reports');
+  set('qa-c-memos',  memoFiles,            'files');
+  set('qa-c-apps',   (c.apps||[]).length,  'applications');
+  set('qa-c-videos', (c.videos||[]).length,'videos');
+})();
 /* ===================== TABS / FILE / BOOT ===================== */
 function switchTab(p){
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.p===p));
@@ -3122,6 +3289,10 @@ function switchTab(p){
   if(p==='legacy') renderLegacy();
   if(p==='reports') renderReports();
   if(p==='sd') renderSD();
+    if(p==='dsr') renderDSR();
+  if(p==='memos'){ MEMO_SUBJECT=null; renderMemos(); }
+  if(p==='apps') renderApps();
+  if(p==='videos') renderVideos();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 document.getElementById('tabrow').addEventListener('click',e=>{

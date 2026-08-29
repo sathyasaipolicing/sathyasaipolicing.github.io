@@ -3337,7 +3337,7 @@ function switchTab(p){
   if(p==='legacy') renderLegacy();
   if(p==='reports') renderReports();
   if(p==='sd') renderSD();
-    if(p==='dsr') renderDSR();
+    if(p==='dsr'){ DSR_MONTH=null; renderDSR(); }
   if(p==='memos'){ MEMO_SUBJECT=null; renderMemos(); }
   if(p==='apps') renderApps();
   if(p==='videos') renderVideos();

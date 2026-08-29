@@ -3228,12 +3228,11 @@ async function renderDSR(){
     host.innerHTML=head+pills+tableFor(byYear[DSR_YEAR][DSR_MONTH],
       C_MONTHS[DSR_MONTH]+' '+DSR_YEAR);
   }else{
-    const cards=C_MONTHS.map((mn,i)=>{
+        const cards=C_MONTHS.map((mn,i)=>{
       const n=(byYear[DSR_YEAR]||[])[i] ? byYear[DSR_YEAR][i].length : 0;
-      if(!n) return '<div class="dsr-mon off"><span class="dsr-mi">🗓</span>'
-        +'<span class="dsr-mn">'+mn+'</span><span class="dsr-mc">No reports</span></div>';
-      return '<button type="button" class="dsr-mon" data-mon="'+i+'"><span class="dsr-mi">🗓</span>'
-        +'<span class="dsr-mn">'+mn+'</span><span class="dsr-mc">'+n+' report(s)</span></button>';
+      if(!n) return '<span class="dsr-mon off">🗓 '+mn+'</span>';
+      return '<button type="button" class="dsr-mon" data-mon="'+i+'">🗓 '+mn
+        +'<span class="dsr-mc">'+n+'</span></button>';
     }).join('');
     host.innerHTML=head+pills+'<div class="dsr-grid">'+cards+'</div>';
   }

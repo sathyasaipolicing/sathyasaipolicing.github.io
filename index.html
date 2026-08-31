@@ -808,6 +808,32 @@ table.sd-rank td.nm{white-space:nowrap}
   .subline{white-space:nowrap !important;overflow-wrap:normal !important;font-size:13px !important;}
   .subline .sep{margin:0 7px !important;}
 }
+/* ===== Mobile fix: DSR / Memos file tables ===== */
+@media(max-width:640px){
+  .rp-table{font-size:12px}
+  .rp-table th,.rp-table td{padding:9px 6px}
+
+  /* Size column mobile lo avasaram ledu — hide */
+  .rp-table th:nth-child(3),
+  .rp-table td:nth-child(3){display:none}
+
+  /* file-name column ni kudinchi Action ki chotu ivvadam */
+  .rp-ico{display:none}
+  .rp-name{font-size:12px;line-height:1.35;word-break:break-word;gap:0}
+
+  /* View / Download buttons */
+  .rp-act{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}
+  .rp-act a{font-size:11px;padding:5px 8px;white-space:nowrap}
+
+  /* inka width saripokapothe scroll avvatuu — clip avvakunda */
+  .card .cb{overflow-x:auto;-webkit-overflow-scrolling:touch}
+}
+
+/* chala chinna phones — Date kuda hide (file name lo date untundi) */
+@media(max-width:400px){
+  .rp-table th:nth-child(2),
+  .rp-table td:nth-child(2){display:none}
+}
 </style>
 </head>
 <body>

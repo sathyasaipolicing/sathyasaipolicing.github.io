@@ -912,7 +912,7 @@ table.sd-rank td.nm{white-space:nowrap}
            href="https://drive.google.com/drive/folders/1hVkTH-g8U7HIEjqzV5PQ-kKTrtyjzUWE">
           <span class="qa-tile-ico">🎥</span>
           <span class="qa-tile-name">Awareness Videos</span>
-          <span class="qa-tile-sub">Watch on Google Drive ↗</span></a>>
+          <span class="qa-tile-sub">Watch on Google Drive ↗</span></a>
       </div>
     </div>
   </div>
@@ -3362,7 +3362,7 @@ async function renderVideos(){
 
 /* Quick Access tiles → open the matching tab, and show live counts */
 document.addEventListener('click', e=>{
-  const t=e.target.closest('.qa-tile'); if(t) switchTab(t.dataset.p);
+  const t=e.target.closest('.qa-tile'); if(t && t.dataset.p) switchTab(t.dataset.p);
 });
 (async function qaCounts(){
   const c=await loadContent();

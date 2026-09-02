@@ -356,7 +356,7 @@ table.frfull{table-layout:auto}
 table.frfull thead tr{height:auto}
 table.frfull thead th{vertical-align:middle}
 table.frfull thead th:nth-child(n+6){
-  min-width:52px;max-width:80px;padding:7px 5px;
+  min-width:58px;max-width:100px;padding:7px 5px;
   vertical-align:middle;text-align:center;white-space:normal;
   word-break:break-word;overflow-wrap:break-word;
   font-size:10.5px;font-weight:600;line-height:1.25;letter-spacing:0}
@@ -369,10 +369,10 @@ table.frfull thead th:nth-child(n+6) .rot{
   word-break:break-word;
   line-height:1.25;
   text-align:center;
-  max-height:2.6em;
-  overflow:hidden}
+  max-height:none;
+  overflow:visible}
 table.frfull tbody td:nth-child(n+6){
-  font-size:11px;padding:5px 4px;min-width:52px;max-width:80px;
+  font-size:11px;padding:5px 4px;min-width:58px;max-width:100px;
   text-align:center;vertical-align:middle;white-space:nowrap}
 /* Police Station column: AutoFit to the longest station name (single line) */
 table.frfull td.nm{min-width:0;max-width:none;width:1%;white-space:nowrap;font-size:12px}
@@ -396,7 +396,7 @@ table.hm .heat.na{display:block;min-width:32px;padding:6px 4px;border-radius:0;m
 table.hm{table-layout:auto}
 table.hm thead tr{height:auto}
 table.hm thead th:nth-child(n+5){
-  min-width:46px;max-width:74px;padding:7px 4px;
+  min-width:52px;max-width:92px;padding:7px 4px;
   vertical-align:middle;text-align:center;white-space:normal;
   word-break:normal;overflow-wrap:break-word;
   font-size:10px;font-weight:600;line-height:1.2;letter-spacing:0}
@@ -407,7 +407,7 @@ table.hm thead th:nth-child(n+5) .rot{
   white-space:normal;
   overflow-wrap:break-word;
   line-height:1.2}
-table.hm tbody td:nth-child(n+5){min-width:46px;max-width:74px}
+table.hm tbody td:nth-child(n+5){min-width:52px;max-width:92px}
 table.hm .heat,table.hm .heat.na{min-width:0;width:100%}
 table.hm thead th:nth-child(n+2):nth-child(-n+4){white-space:nowrap}
 /* Full Rankings / Trends tables: 30px rows + borders on every cell */
@@ -577,15 +577,15 @@ table.frfull thead th:nth-child(3){
 /* 2. Full Rankings methodology headers — allow two-line wrap, max 2 lines */
 table.frfull thead th:nth-child(n+6){
   white-space:normal!important;
-  min-width:52px!important;
-  max-width:80px!important;
+  min-width:58px!important;
+  max-width:100px!important;
 }
 table.frfull thead th:nth-child(n+6) .rot{
   white-space:normal!important;
   word-break:break-word!important;
   overflow-wrap:break-word!important;
-  max-height:2.6em!important;
-  overflow:hidden!important;
+  max-height:none!important;
+  overflow:visible!important;
   line-height:1.25!important;
   display:block!important;
 }

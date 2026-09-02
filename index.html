@@ -1191,7 +1191,7 @@ async function boot(){
 }
 
 /* ---------- PARSE a workbook ArrayBuffer (xlsx/csv) into our schema ---------- */
-const META = new Set(['rank','district','unit','police station','ps','score','δ','delta','grade']);
+const META = new Set(['rank','district','unit','police station','ps','score','δ','delta','grade','rank move','rank movement','chg','δ score','delta score','sl.no','s.no','sno','slno']);
 function parseDelta(v){
   if(v==null) return null;
   const s=String(v).trim();
@@ -1295,10 +1295,30 @@ function weekSafeConfig(){
   return c;
 }
 
+/* Locate the real header row. District proforma sheets often carry a title,
+   a "Week ending .." line and a blank row above the actual column headings, so
+   row 0 is not always the header. Pick the first wide row, strongly preferring
+   one that contains a known heading keyword. */
+const HDR_KEYS=['police station','ps name','psname','station name','station',
+                'district','unit','unit name','rank'];
+function findHeaderRow(aoa){
+  let best=0, bestScore=-1;
+  for(let i=0;i<Math.min(15,aoa.length);i++){
+    const r=aoa[i]||[];
+    const cells=r.filter(v=>v!=null && String(v).trim()!=='');
+    if(cells.length<3) continue;
+    const low=cells.map(v=>String(v).trim().toLowerCase());
+    const hasKey=low.some(v=>HDR_KEYS.includes(v));
+    const score=cells.length + (hasKey?1000:0);
+    if(score>bestScore){ bestScore=score; best=i; }
+  }
+  return best;
+}
 function parseWorkbook(buf){
   const wb = XLSX.read(buf, {type:'array'});
   const ws = wb.Sheets[wb.SheetNames[0]];
-  const aoa = XLSX.utils.sheet_to_json(ws, {header:1, raw:true});
+  const raw = XLSX.utils.sheet_to_json(ws, {header:1, raw:true});
+  const aoa = raw.slice(findHeaderRow(raw));
   const header = aoa[0].map(h=> h==null?'':String(h).trim());
   const low = header.map(h=>h.toLowerCase());
 

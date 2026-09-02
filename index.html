@@ -1002,12 +1002,13 @@ function paramMeta(name){
     }
   }
   // category keyword fallbacks
-  const cats=[['medleapr','MedLEaPR',1],['natgrid','NATGRID',1],['cctns','CCTNS',1],
-    ['zero fir','CCTNS',1],['citizen','Citizen Portal',1],['esakshya','eSakshya',1],
-    ['crimac','CriMAC',1],['ceir','CEIR',1],['eprosecut','eProsecution',1],
-    ['firs','FIRs & CS',1],['eoffice','eOffice',1],['apolis','APOLIS',1],
-    ['drone','Drones',1],['dial','Dial 112',/resp|time|latency/.test(n)?-1:1],
-    ['cctv','CCTV360',1],['news360','News360AI',1]];
+  const cats=[['medleapr','MedLEaPR',1],['summons','e-Summons',1],['e-dar','e-DAR',1],
+    ['cctns','CCTNS',1],['zero fir','CCTNS',1],['ittsso','ITTSSO',1],
+    ['citizen','Citizen Portal',1],['sakshya','eSakshya',1],
+    ['cri mac','CriMAC',1],['crimac','CriMAC',1],['ceir','CEIR',1],
+    ['prosecut','eProsecution',1],['ncl','NCL / NLC',1],['nlc','NCL / NLC',1],
+    ['dial','Dial 112',1],['cctv','CCTV360',1],['fsl','eFSL',1],
+    ['mrm','MRM Portal',1],['grm','GRM Portal',1],['vasthalya','Mission Vasthalya',1]];
   for(const [kw,cat,dir] of cats){ if(n.includes(kw)) return {cat,dir,wt:null}; }
   return {cat:name, dir:1, wt:null};
 }
@@ -1015,30 +1016,29 @@ function paramMeta(name){
 /* Official composite-scoring model — 21 weighted sub-parameters (documentation).
    [#, Parameter, Category, Weight%, Type, Direction(+1 higher / -1 lower)] */
 const WEIGHTS_TABLE = [
-  ['MedLEaPR PME','MedLEaPR',2.5,'Weekly',1],
-  ['MedLEaPR MLC','MedLEaPR',2.5,'Weekly',1],
-  ['NATGRID (Gandiva+Sudarshan)','NATGRID',5,'Weekly',1],
-  ['DGP Dashboard','CCTNS',2.5,'Cumulative',1],
-  ['CCTNS Overall Forms Entry','CCTNS',2.5,'Cumulative',1],
-  ['CCTNS Weekly Forms IIF 1-7','CCTNS',2.5,'Weekly',1],
-  ['CCTNS Weekly Forms IIF 8-15','CCTNS',2.5,'Weekly',1],
+  ['MedLEaPR -MLC','MedLEaPR',2.5,'Weekly',1],
+  ['MedLEaPR - PME','MedLEaPR',2.5,'Weekly',1],
+  ['E-Summons','e-Summons',5,'Weekly',1],
+  ['e-DAR','e-DAR',5,'Weekly',1],
+  ['CCTNS Over all Forms Entry','CCTNS',5,'Cumulative',1],
+  ['CCTNS Weekly Forms 1-7','CCTNS',2.5,'Weekly',1],
+  ['CCTNS Weekly Forms 8-15','CCTNS',2.5,'Weekly',1],
+  ['ITTSSO','ITTSSO',5,'Weekly',1],
   ['Zero FIRs','CCTNS',5,'Weekly',1],
-  ['Citizen Portal Pending%','Citizen Portal',5,'Cumulative',1],
-  ['eSakshya SID%','eSakshya',5,'Cumulative',1],
-  ['CriMAC (PS%+Alerts/FIR)','CriMAC',5,'Weekly',1],
+  ['Citizen Portal Pending','Citizen Portal',2.5,'Cumulative',1],
+  ['E-Sakshya SID %','eSakshya',5,'Cumulative',1],
+  ['Cri Mac (PS + Alerts)','CriMAC',2.5,'Weekly',1],
   ['CEIR Score','CEIR',5,'Cumulative',1],
-  ['eProsecution (PS%+Requests)','eProsecution',5,'Weekly',1],
-  ['FIRs & CS Consumed in Court','FIRs & CS',5,'Cumulative',1],
-  ['eOffice (Files+Speed)','eOffice',5,'Weekly',1],
-  ['APOLIS (Downloads+APR+ACR)','APOLIS',5,'Cumulative',1],
-  ['Drone Flying Hours','Drones',5,'Weekly',1],
-  ['Dial112 Tabs Online%','Dial 112',5,'Weekly',1],
-  ['Dial112 Resp.Time','Dial 112',5,'Weekly',-1],
-  ['CCTV360 Usage','CCTV360',5,'Weekly',1],
-  ['News360AI','News360AI',5,'Weekly',1],
-  ['eFSL','eFSL',5,'Weekly',1],
-  ['UC3','UC3',2.5,'Weekly',1],
-  ['UC4','UC4',2.5,'Weekly',1],
+  ['e-Prosecution (PS% + Requests)','eProsecution',5,'Weekly',1],
+  ['NCL 60 Days','NCL / NLC',5,'Cumulative',1],
+  ['NLC 90 Days','NCL / NLC',5,'Cumulative',1],
+  ['Dial 112 tabs Online %','Dial 112',2.5,'Weekly',1],
+  ['Dial 112 tabs Response Time','Dial 112',2.5,'Weekly',1],
+  ['CCTV 360 Usage','CCTV360',5,'Weekly',1],
+  ['e-FSL','eFSL',5,'Weekly',1],
+  ['MRM Portal','MRM Portal',5,'Weekly',1],
+  ['GRM Portal','GRM Portal',5,'Weekly',1],
+  ['Mission Vasthalya','Mission Vasthalya',5,'Weekly',1],
 ];
 
 /* Default per-parameter weights used ONLY when a row has no precomputed Score
@@ -1246,17 +1246,18 @@ function detectNameIdx(aoa, header, low){
 /* Canonical 21 parameters: name, category, direction(+1/-1). Used to expand
    truncated headers from the weighted workbook (e.g. "NATGRID (Gand" → full). */
 const CANON21=[
-  ['MedLEaPR PME','MedLEaPR',1],['MedLEaPR MLC','MedLEaPR',1],
-  ['NATGRID (Gandiva+Sudarshan)','NATGRID',1],['DGP Dashboard','CCTNS',1],
-  ['CCTNS Overall Forms Entry','CCTNS',1],['CCTNS Weekly Forms IIF 1-7','CCTNS',1],
-  ['CCTNS Weekly Forms IIF 8-15','CCTNS',1],['Zero FIRs','CCTNS',1],
-  ['Citizen Portal Pending%','Citizen Portal',1],['eSakshya SID%','eSakshya',1],
-  ['CriMAC (PS%+Alerts/FIR)','CriMAC',1],['CEIR Score','CEIR',1],
-  ['eProsecution (PS%+Requests)','eProsecution',1],['FIRs & CS Consumed in Court','FIRs & CS',1],
-  ['eOffice (Files+Speed)','eOffice',1],['APOLIS (Downloads+APR+ACR)','APOLIS',1],
-  ['Drone Flying Hours','Drones',1],['Dial112 Tabs Online%','Dial 112',1],
-  ['Dial112 Resp.Time','Dial 112',-1],['CCTV360 Usage','CCTV360',1],['News360AI','News360AI',1],
-  ['eFSL','eFSL',1],['UC3','UC3',1],['UC4','UC4',1],
+  ['MedLEaPR -MLC','MedLEaPR',1],['MedLEaPR - PME','MedLEaPR',1],
+  ['E-Summons','e-Summons',1],['e-DAR','e-DAR',1],
+  ['CCTNS Over all Forms Entry','CCTNS',1],['CCTNS Weekly Forms 1-7','CCTNS',1],
+  ['CCTNS Weekly Forms 8-15','CCTNS',1],['ITTSSO','ITTSSO',1],
+  ['Zero FIRs','CCTNS',1],['Citizen Portal Pending','Citizen Portal',1],
+  ['E-Sakshya SID %','eSakshya',1],['Cri Mac (PS + Alerts)','CriMAC',1],
+  ['CEIR Score','CEIR',1],['e-Prosecution (PS% + Requests)','eProsecution',1],
+  ['NCL 60 Days','NCL / NLC',1],['NLC 90 Days','NCL / NLC',1],
+  ['Dial 112 tabs Online %','Dial 112',1],['Dial 112 tabs Response Time','Dial 112',1],
+  ['CCTV 360 Usage','CCTV360',1],['e-FSL','eFSL',1],
+  ['MRM Portal','MRM Portal',1],['GRM Portal','GRM Portal',1],
+  ['Mission Vasthalya','Mission Vasthalya',1],
 ];
 
 /* (6) Resolve category + direction for a parameter by NAME (dynamic params).
@@ -2613,34 +2614,36 @@ function renderMethod(){
     <div class="card meth" style="margin-bottom:16px"><div class="cb">
       <h3>How marks are awarded — per parameter</h3>
       <ol class="mparam">
-        <li><b>MedLEaPR PME</b> — Counts PME cases and checks whether they were updated. Full <b>5 marks</b> if all PME completed, or <b>5 marks</b> if no cases reported that week.</li>
-        <li><b>MedLEaPR MLC</b> — Counts MLC cases and checks whether they were updated. Full <b>5 marks</b> if all MLC completed, or <b>5 marks</b> if no cases reported that week.</li>
-        <li><b>NATGRID</b> — <span class="na">Not scored — does not fall under PS category.</span></li>
-        <li><b>DGP Dashboard</b> — <b>5 marks</b> if the PS SHO submits remarks (Weekly).</li>
-        <li><b>CCTNS Overall</b> — Scored on if forms per FIR &gt;= Dist Average. <b>5 marks</b> weightage.</li>
-        <li><b>CCTNS IIF 1–7</b> — Scored on forms entered for crimes reported that week (2.5% weightage). <b>1.25 marks</b> if no cases reported that week.</li>
-        <li><b>CCTNS IIF 8–15</b> — <span class="na">Not scored — these reports are auto-generated.</span></li>
-        <li><b>Zero FIRs</b> — <b>5 marks</b> if none pending or none reported.</li>
-        <li><b>Citizen Portal</b> — Scored on disposal. <b>5 marks</b> weightage.</li>
-        <li><b>eSakshya (SID%)</b> — Scored on final PS compliance. <b>5 marks</b> weightage.</li>
-        <li><b>CriMAC</b> — CriMAC alert count must be &ge; cases reported in that PS during the week.</li>
-        <li><b>CEIR Score</b> — Performance-based. <b>5 marks</b>.</li>
-        <li><b>eProsecution</b> — At least <b>one draft charge sheet</b> should be sent to the <b>PP/APP</b> for opinion <b>every week</b> — <b>5 Marks</b>. (<b>CCS and Mahila PS capped at full marks</b>)</li>
-        <li><b>FIRs &amp; CS Consumption</b> — <b>2.5 marks</b> for FIR consumption at court + <b>2.5 marks</b> for charge-sheet consumption at court.</li>
-        <li><b>eOffice</b> — Scored based on disposal (District Average) and turnaround time. <b>5 marks</b>.</li>
-        <li><b>APOLIS</b> — <b>2.5 marks</b> for app downloads in the PS + <b>2.5 marks</b> for APRs in the PS.</li>
-        <li><b>Drone Flying</b> — Scored on flying <b>5 hours per day</b> and enforcement (<b>4 + 1</b>). <b>5 marks</b>. Neutral <b>1 mark</b> if there are no drones in the PS.</li>
-        <li><b>Dial112 Tabs</b> — Scored on continuous connectivity. <b>5 marks</b>. (<b>Mahila PS capped at Full Marks</b>)</li>
-        <li><b>Dial112 Response</b> — Scored on response time. <b>5 marks</b>.</li>
-        <li><b>CCTV360 Usage</b> — Web App &amp; Mobile App Login: <b>2.5 + 2.5 = 5 marks</b>. Marks are awarded only if the user logs in to both the Web App and the Mobile App at least once every day.</li>
-        <li><b>News360AI</b> — <span class="na">Not scored — these reports are auto-generated.</span></li>
+        <li><b>MedLEaPR MLC</b> — Counts MLC cases and checks whether they were updated. Full marks if all MLC completed, or full marks if no cases reported that week. <b>2.5%</b></li>
+        <li><b>MedLEaPR PME</b> — Counts PME cases and checks whether they were updated. Full marks if all PME completed, or full marks if no cases reported that week. <b>2.5%</b></li>
+        <li><b>E-Summons</b> — <span class="na">Scoring note to be updated.</span> <b>5%</b></li>
+        <li><b>e-DAR</b> — <span class="na">Scoring note to be updated.</span> <b>5%</b></li>
+        <li><b>CCTNS Over all Forms Entry</b> — Scored on forms per FIR vs district average. <b>5%</b></li>
+        <li><b>CCTNS Weekly Forms 1–7</b> — Scored on forms entered for crimes reported that week. <b>2.5%</b></li>
+        <li><b>CCTNS Weekly Forms 8–15</b> — Scored on forms entered for crimes reported that week. <b>2.5%</b></li>
+        <li><b>ITTSSO</b> — <span class="na">Scoring note to be updated.</span> <b>5%</b></li>
+        <li><b>Zero FIRs</b> — Full marks if none pending or none reported. <b>5%</b></li>
+        <li><b>Citizen Portal Pending</b> — Scored on disposal. <b>2.5%</b></li>
+        <li><b>E-Sakshya SID %</b> — Scored on final PS compliance. <b>5%</b></li>
+        <li><b>Cri Mac (PS + Alerts)</b> — CriMAC alert count must be &ge; cases reported in that PS during the week. <b>2.5%</b></li>
+        <li><b>CEIR Score</b> — Performance-based. <b>5%</b></li>
+        <li><b>e-Prosecution (PS% + Requests)</b> — At least <b>one draft charge sheet</b> should be sent to the <b>PP/APP</b> for opinion <b>every week</b>. (<b>CCS and Mahila PS capped at full marks</b>) <b>5%</b></li>
+        <li><b>NCL 60 Days</b> — <span class="na">Scoring note to be updated.</span> <b>5%</b></li>
+        <li><b>NLC 90 Days</b> — <span class="na">Scoring note to be updated.</span> <b>5%</b></li>
+        <li><b>Dial 112 tabs Online %</b> — Scored on continuous connectivity. (<b>Mahila PS capped at Full Marks</b>) <b>2.5%</b></li>
+        <li><b>Dial 112 tabs Response Time</b> — Scored on response time. <b>2.5%</b></li>
+        <li><b>CCTV 360 Usage</b> — Web App &amp; Mobile App login. Marks are awarded only if the user logs in to both the Web App and the Mobile App at least once every day. <b>5%</b></li>
+        <li><b>e-FSL</b> — <span class="na">Scoring note to be updated.</span> <b>5%</b></li>
+        <li><b>MRM Portal</b> — <span class="na">Scoring note to be updated.</span> <b>5%</b></li>
+        <li><b>GRM Portal</b> — <span class="na">Scoring note to be updated.</span> <b>5%</b></li>
+        <li><b>Mission Vasthalya</b> — <span class="na">Scoring note to be updated.</span> <b>5%</b></li>
       </ol>
       <h3>Key principles</h3>
       <ul class="mkey">
         <li>Full marks are awarded where compliance is complete.</li>
         <li>Neutral marks are provided where no activity exists due to non-applicability (e.g. no cases reported, no drones available).</li>
         <li>Performance-based scoring is used for disposal, response time, usage, flying hours, searches, and compliance percentages.</li>
-        <li><b>NATGRID</b>, <b>CCTNS IIF 8–15</b>, and <b>News360AI</b> are currently excluded from scoring.</li>
+        <li>The composite is built from <b>23 parameters</b> totalling <b>95%</b> weightage as per the current district proforma.</li>
       </ul>
     </div></div>
 

@@ -920,7 +920,7 @@ table.sd-rank td.nm{white-space:nowrap}
           <span class="qa-tile-sub" id="qa-c-dsr">View daily reports</span></button>
         <button type="button" class="qa-tile t2" data-p="memos">
           <span class="qa-tile-ico">📁</span>
-          <span class="qa-tile-name">Important Memos</span>
+          <span class="qa-tile-name">Important SOPs</span>
           <span class="qa-tile-sub" id="qa-c-memos">Browse by subject</span></button>
         <button type="button" class="qa-tile t3" data-p="apps">
           <span class="qa-tile-ico">💻</span>
@@ -3329,9 +3329,9 @@ async function renderMemos(){
   host.innerHTML=cEmpty('Loading…');
   const c=await loadContent();
   const subs=(c.memos||[]);
-  const head=cHead('📑','Important Memos','Browse by subject');
+  const head=cHead('📑','Important SOPs','Browse by subject');
   if(!subs.length){
-    host.innerHTML=head+cEmpty('No memos published yet. Create a subject folder inside content/memos/ and add files to it.');
+    host.innerHTML=head+cEmpty('No SOPs published yet. Create a subject folder inside content/memos/ and add files to it.');
     return;
   }
   if(MEMO_SUBJECT===null){

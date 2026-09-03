@@ -134,7 +134,7 @@ nav.tabs{position:sticky;top:0;z-index:40;background:rgba(233,237,245,.82);backd
 .qa-box h3{font-family:'Archivo';font-weight:800;font-size:15px;color:var(--accent);
   margin:0 0 3px;letter-spacing:.02em}
 .qa-box p{margin:0;font-size:12.5px;color:var(--muted)}
-.qa-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.qa-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .qa-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-align:center;
   border:1px solid var(--line);border-radius:13px;padding:13px 12px;cursor:pointer;
   font-family:inherit;transition:.16s}
@@ -914,11 +914,7 @@ table.sd-rank td.nm{white-space:nowrap}
       <div class="qa-head"><span class="qa-star">⭐</span>
         <div><h3>QUICK ACCESS</h3><p>Important tools &amp; resources</p></div></div>
       <div class="qa-tiles">
-        <button type="button" class="qa-tile t1" data-p="dsr">
-          <span class="qa-tile-ico">📋</span>
-          <span class="qa-tile-name">Daily DSR</span>
-          <span class="qa-tile-sub" id="qa-c-dsr">View daily reports</span></button>
-        <button type="button" class="qa-tile t2" data-p="memos">
+       <button type="button" class="qa-tile t2" data-p="memos">
           <span class="qa-tile-ico">📁</span>
           <span class="qa-tile-name">Important SOPs</span>
           <span class="qa-tile-sub" id="qa-c-memos">Browse by subject</span></button>
@@ -3416,7 +3412,6 @@ document.addEventListener('click', e=>{
   const set=(id,n,word)=>{ const el=document.getElementById(id);
     if(el && n) el.textContent=n+' '+word; };
   const memoFiles=(c.memos||[]).reduce((a,g)=>a+(g.files||[]).length,0);
-  set('qa-c-dsr',    (c.dsr||[]).length,   'reports');
   set('qa-c-memos',  memoFiles,            'files');
   set('qa-c-apps',   (c.apps||[]).length,  'applications');
   set('qa-c-videos', (c.videos||[]).length,'videos');
